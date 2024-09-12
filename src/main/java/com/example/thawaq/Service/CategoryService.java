@@ -1,6 +1,7 @@
 package com.example.thawaq.Service;
 
-import com.example.thawaq.Api.ApIException;
+
+import com.example.thawaq.Api.ApiException;
 import com.example.thawaq.Model.Category;
 import com.example.thawaq.Repository.CategoryRepository;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ public class CategoryService {
 
     public List<Category> getAllCategories() {
         if (categoryRepository.findAll().isEmpty()) {
-            throw new ApIException("Database is empty");
+            throw new ApiException("Database is empty");
         }
             return categoryRepository.findAll();
         
@@ -26,7 +27,7 @@ public class CategoryService {
     public void updateCategory(Category category,Integer id) {
         Category updatedCategory = categoryRepository.findCategoryById(id);
         if (updatedCategory == null) {
-            throw new ApIException("Category not found");
+            throw new ApiException("Category not found");
         }
         updatedCategory.setName(category.getName());
         updatedCategory.setDescription(category.getDescription());
@@ -35,7 +36,7 @@ public class CategoryService {
     public void deleteCategory(Integer id) {
         Category deletedCategory = categoryRepository.findCategoryById(id);
         if (deletedCategory == null) {
-            throw new ApIException("Category not found");
+            throw new ApiException("Category not found");
         }
         categoryRepository.delete(deletedCategory);
     }

@@ -28,15 +28,17 @@ public class Menu {
     private double price;
     @Column(columnDefinition = "varchar(400) not null")
     private String description;
-    @NotEmpty(message = " menuimage can not be null")
+    @NotEmpty(message = " menu image can not be null")
     @Column(columnDefinition = "varchar(1000) not null")
-    private  String menuimage;
+    private  String menuImage;
 
     @ManyToOne
     @JsonIgnore
     private  Category category;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "menu")
-    @JsonIgnore
-    private Set<Like> likes;
+    private Set<Favorite> favorites;
+
+    @ManyToOne
+    private Branch branch;
 }

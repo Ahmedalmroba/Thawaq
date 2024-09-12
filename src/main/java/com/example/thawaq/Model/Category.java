@@ -25,6 +25,5 @@ public class Category {
     @Column(columnDefinition = "varchar(400) not null")
     private String description;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "category")
-    @JsonIgnore
     private Set<Menu> menus;
 }
