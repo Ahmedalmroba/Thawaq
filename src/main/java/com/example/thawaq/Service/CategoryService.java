@@ -3,6 +3,7 @@ package com.example.thawaq.Service;
 
 import com.example.thawaq.Api.ApiException;
 import com.example.thawaq.Model.Category;
+import com.example.thawaq.Model.Menu;
 import com.example.thawaq.Repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,18 @@ public class CategoryService {
         }
         categoryRepository.delete(deletedCategory);
     }
+
+    //Discount by category name (Jana) v2
+    public void applyDiscountToCategoryByName(String categoryName, double discountPercentage) {
+        Category category = categoryRepository.findCategoryByName(categoryName);
+        if (category == null) {
+            throw new ApiException("Category with name: " + categoryName + " not found");}
+        if (discountPercentage <= 0 || discountPercentage > 100) {
+            throw new ApiException("Invalid discount percentage !");}
+        for (Menu menu : category.getMenus()) {
+            double discountedPrice = menu.getPrice() - (menu.getPrice() * discountPercentage / 100);
+            menu.setPrice(discountedPrice);}
+        categoryRepository.save(category);}
 
 
 }

@@ -13,7 +13,7 @@ public interface RatingRepository extends JpaRepository<Rating, Integer> {
 
     Rating findRatingById(Integer id);
     ///v2
-      List findRatingByStore(Store store);
+    List<Rating> findRatingByStore(Store store);
     ///v2
-      List findRatingByExpert(Expert expert);
+    List<Rating> findRatingByExpert(Expert expert);
 }

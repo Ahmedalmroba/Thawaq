@@ -30,9 +30,8 @@ public class Branch {
     @Column(columnDefinition = "VARCHAR(50) NOT NULL")
     private String name;
 
-    @AssertTrue
-    @Column(columnDefinition = "BOOLEAN NOT NULL")
-    private boolean Closed;
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT FALSE") // v2
+    private boolean Open = false; //v2
 
     @ManyToOne
     @JsonIgnore

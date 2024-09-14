@@ -5,6 +5,7 @@ import com.example.thawaq.DTO.ClientDTO;
 import com.example.thawaq.DTO.ExpertDTO;
 import com.example.thawaq.DTO.StoreAdminDTO;
 import com.example.thawaq.Service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,37 +27,37 @@ public class UserController {
     }
 
     @PostMapping("/register-client")
-    public ResponseEntity registerClient(@RequestBody ClientDTO clientDTO) {
+    public ResponseEntity registerClient(@Valid @RequestBody ClientDTO clientDTO) {
         userService.clientRegister(clientDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Client registered successfully"));
     }
 
     @PostMapping("/register-expert")
-    public ResponseEntity registerExpert(@RequestBody ExpertDTO expertDTO) {
+    public ResponseEntity registerExpert(@Valid @RequestBody ExpertDTO expertDTO) {
         userService.expertRegister(expertDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Expert registered successfully"));
     }
 
     @PostMapping("/register-store")
-    public ResponseEntity registerAdmin(@RequestBody StoreAdminDTO storeAdminDTO) {
+    public ResponseEntity registerAdmin(@Valid @RequestBody StoreAdminDTO storeAdminDTO) {
         userService.storeAdminRegister(storeAdminDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Store Admin registered successfully"));
     }
 
     @PutMapping("/update-client")
-    public ResponseEntity updateClient(@RequestBody ClientDTO clientDTO) {
+    public ResponseEntity updateClient(@Valid @RequestBody ClientDTO clientDTO) {
         userService.clientUpdate(clientDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Client updated successfully"));
     }
 
     @PutMapping("/update-expert")
-    public ResponseEntity updateExpert(@RequestBody ExpertDTO expertDTO) {
+    public ResponseEntity updateExpert(@Valid @RequestBody ExpertDTO expertDTO) {
         userService.expertUpdate(expertDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Expert updated successfully"));
     }
 
     @PutMapping("/update-store")
-    public ResponseEntity updateAdmin(@RequestBody StoreAdminDTO storeAdminDTO) {
+    public ResponseEntity updateAdmin(@Valid @RequestBody StoreAdminDTO storeAdminDTO) {
         userService.storeAdminUpdate(storeAdminDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Store Admin updated successfully"));
     }
@@ -66,6 +67,7 @@ public class UserController {
         userService.deleteUserById(userId);
         return ResponseEntity.status(200).body(new ApiResponse("User deleted successfully"));
     }
+
     ///v2
     @PutMapping("/block-expert/{expertId}/{userId}")
     public ResponseEntity BlockExpert(@PathVariable Integer  expertId,@PathVariable Integer userId){
@@ -90,6 +92,4 @@ public class UserController {
         userService.UnBlockStoreAdmin(storeAdminId,userId);
         return ResponseEntity.status(200).body(new ApiResponse("Expert unblocked successfully"));
     }
-
-
 }

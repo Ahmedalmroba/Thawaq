@@ -21,8 +21,8 @@ public class User {
     @Column(columnDefinition = "VARCHAR(35) NOT NULL UNIQUE")
     private String username;
     @NotEmpty(message = "Password cannot be empty")
-    @Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
-            message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
+    //@Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
+      //      message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
     @Column(columnDefinition = "VARCHAR(35) NOT NULL")
     private String password;
     @NotEmpty
@@ -44,7 +44,7 @@ public class User {
     private String email;
     @NotEmpty(message = "Phone Number cannot be empty")
     @Column(columnDefinition = "VARCHAR(10) NOT NULL UNIQUE")
-    @Pattern(regexp = "^(05|0)[0-9]{10}$" , message = "Phone Number must be 10 numbers and start with 05")
+    //@Pattern(regexp = "^(05|0)[0-9]{10}$" , message = "Phone Number must be 10 numbers and start with 05")
     private String phoneNumber;
     @Column(columnDefinition = "VARCHAR(25) NOT NULL")
     private String country;

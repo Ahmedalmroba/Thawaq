@@ -18,9 +18,10 @@ public class RequestController {
         return ResponseEntity.status(200).body(requestService.getAllRequests());
     }
 
-    @PostMapping("/add-request")
-    public ResponseEntity addRequest(@Valid @RequestBody Request request) {
-        requestService.addRequest(request);
+    //add Request (Jana) v2
+    @PostMapping("/add-request/{storeAdminId}/{expertId}")
+    public ResponseEntity addRequest(@Valid @RequestBody Request request,@PathVariable Integer storeAdminId, @PathVariable Integer expertId) {
+        requestService.addRequest(request,storeAdminId,expertId);
         return ResponseEntity.status(200).body(new ApiResponse("Successfully added request !"));
     }
 

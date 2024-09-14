@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/store")
+@RequestMapping("/api/v1/store-admin")
 public class StoreAdminController {
     private final StoreAdminService storeAdminService;
 

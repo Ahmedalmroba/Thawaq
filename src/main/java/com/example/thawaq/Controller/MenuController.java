@@ -33,4 +33,10 @@ public class MenuController {
         menuService.deleteMenu(MenuId);
         return ResponseEntity.status(200).body("deleted successfully");
     }
+
+    //Find dish by price range min and max (Jana) v2
+    @GetMapping("/get-By-price-range/{priceMin}/{priceMax}")
+    public ResponseEntity findDishesByPriceRange(@PathVariable double priceMin, @PathVariable double priceMax) {
+        return ResponseEntity.status(200).body(menuService.findDishesByPriceRange(priceMin, priceMax));
+    }
 }

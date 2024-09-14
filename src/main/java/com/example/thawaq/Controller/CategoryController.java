@@ -1,5 +1,6 @@
 package com.example.thawaq.Controller;
 
+import com.example.thawaq.Api.ApiResponse;
 import com.example.thawaq.Model.Category;
 import com.example.thawaq.Service.CategoryService;
 import jakarta.validation.Valid;
@@ -35,4 +36,10 @@ public class CategoryController {
         categoryService.deleteCategory(cId);
         return ResponseEntity.status(200).body("category deleted successfully");
     }
+
+    //Discount by category name (Jana) v2
+    @PutMapping("/apply-discount/{categoryName}/{discountPercentage}")
+    public ResponseEntity applyDiscountToCategoryByName(@PathVariable String categoryName,@PathVariable double discountPercentage){
+        categoryService.applyDiscountToCategoryByName(categoryName,discountPercentage);
+        return ResponseEntity.status(200).body(new ApiResponse("Successfully applied discount to "+categoryName));}
 }

@@ -36,7 +36,7 @@ public class UserService {
     public void storeAdminRegister(StoreAdminDTO storeAdminDTO) {
         User user = new User(null,storeAdminDTO.getUsername(),storeAdminDTO.getPassword(),"STORE",storeAdminDTO.getFirstName(),storeAdminDTO.getLastName(),storeAdminDTO.getEmail(),storeAdminDTO.getPhoneNumber(), storeAdminDTO.getCountry(), storeAdminDTO.getCity(), null,null,null);
         userRepository.save(user);
-        StoreAdmin storeAdmin = new StoreAdmin(null , user,null);
+        StoreAdmin storeAdmin = new StoreAdmin(null , user,false,null);
         storeAdminRepository.save(storeAdmin);
     }
 
@@ -103,12 +103,13 @@ public class UserService {
     public void deleteUserById(Integer id) {
         userRepository.deleteById(id);
     }
+
     ///v2
     public void BlockExpert(Integer  expertId,Integer userId) {
         Expert expert = expertRepository.findExpertById(expertId);
         User user = userRepository.findUserById(userId);
-       if (!user.getRole().equals("Admin"))
-           throw new ApiException("You are not allowed to block this expert");
+        if (!user.getRole().equals("ADMIN"))
+            throw new ApiException("You are not allowed to block this expert");
 
         if (expert == null||user==null) {
             throw new ApiException("Expert not found or storeAdmin not found");
@@ -122,7 +123,7 @@ public class UserService {
     public void UnblockExpert(Integer  expertId,Integer userId) {
         Expert expert = expertRepository.findExpertById(expertId);
         User user = userRepository.findUserById(userId);
-        if (!user.getRole().equals("Admin"))
+        if (!user.getRole().equals("ADMIN"))
             throw new ApiException("You are not allowed to block this expert");
 
         if (expert == null||user==null) {
@@ -137,7 +138,7 @@ public class UserService {
         StoreAdmin storeAdmin = storeAdminRepository.findStoreAdminById(storeAdminId);
         User user = userRepository.findUserById(userId);
 
-        if (!user.getRole().equals("Admin"))
+        if (!user.getRole().equals("ADMIN"))
             throw new ApiException("You are not allowed to block this storeAdmin");
 
         if (storeAdmin == null||user==null) {
@@ -153,7 +154,7 @@ public class UserService {
         StoreAdmin storeAdmin = storeAdminRepository.findStoreAdminById(storeAdminId);
         User user = userRepository.findUserById(userId);
 
-        if (!user.getRole().equals("Admin"))
+        if (!user.getRole().equals("ADMIN"))
             throw new ApiException("You are not allowed to unblock this storeAdmin");
 
 
@@ -165,5 +166,6 @@ public class UserService {
         storeAdminRepository.save(storeAdmin);
 
     }
+
 
 }

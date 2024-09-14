@@ -20,8 +20,8 @@ public class StoreAdminDTO {
     @Size(min=4,max = 25, message = "Username must have between 4 to 35 characters")
     private String username;
     @NotEmpty(message = "Password cannot be empty")
-    @Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
-            message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
+    //@Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
+       //     message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
     private String password;
     @NotEmpty
     @Pattern(regexp = "^(CLIENT|EXPERT|STORE|ADMIN)$")
@@ -37,8 +37,9 @@ public class StoreAdminDTO {
     @Size(min = 2 , max = 35)
     private String email;
     @NotEmpty(message = "Phone Number cannot be empty")
-    @Pattern(regexp = "^(05|0)[0-9]{10}$" , message = "Phone Number must be 10 numbers and start with 05")
+    //@Pattern(regexp = "^(05|0)[0-9]{10}$" , message = "Phone Number must be 10 numbers and start with 05")
     private String phoneNumber;
     private String country;
     private String city;
+    private boolean isActive;
 }

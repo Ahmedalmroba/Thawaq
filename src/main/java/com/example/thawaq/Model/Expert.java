@@ -2,7 +2,6 @@ package com.example.thawaq.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -33,8 +32,6 @@ public class Expert {
     @Column(columnDefinition = "VARCHAR(30) NOT NULL UNIQUE")
     @Size(min = 1, max = 30)
     private String x;
-    //////////////v2
-    @AssertFalse
     private boolean isActive;
     @OneToOne
     @MapsId

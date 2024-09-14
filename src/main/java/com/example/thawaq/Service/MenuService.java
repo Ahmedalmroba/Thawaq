@@ -58,4 +58,11 @@ public List<Menu> getAllMenus() {
     menuRepository.delete(menu);
     }
 
+    //Find dish by price range min and max (Jana) v2
+    public List<Menu> findDishesByPriceRange(double minPrice, double maxPrice) {
+        List <Menu> m = menuRepository.findDishesByPriceBetween(minPrice, maxPrice);
+        if (m.isEmpty()){
+            return null;}
+        return m;}
+
 }
