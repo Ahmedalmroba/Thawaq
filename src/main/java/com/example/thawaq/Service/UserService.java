@@ -7,6 +7,7 @@ import com.example.thawaq.DTO.StoreAdminDTO;
 import com.example.thawaq.Model.*;
 import com.example.thawaq.Repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class UserService {
     private final ClientRepository clientRepository;
     private final StoreAdminRepository storeAdminRepository;
     private final ExpertRepository expertRepository;
+    private final StoreRepository storeRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -28,20 +30,23 @@ public class UserService {
     }
 
     public void clientRegister(ClientDTO clientDTO) {
-        User user = new User(null, clientDTO.getUsername(), clientDTO.getPassword(), "CLIENT" , clientDTO.getFirstName(), clientDTO.getLastName(), clientDTO.getEmail(), clientDTO.getPhoneNumber(), clientDTO.getCountry(), clientDTO.getCity(), null,null,null);
+        String hash = new BCryptPasswordEncoder().encode(clientDTO.getPassword());
+        User user = new User(null, clientDTO.getUsername(), hash, "CLIENT" , clientDTO.getFirstName(), clientDTO.getLastName(), clientDTO.getEmail(), clientDTO.getPhoneNumber(), clientDTO.getCountry(), clientDTO.getCity(), null,null,null);
         userRepository.save(user);
         Client client = new Client (null , user , null,null);
         clientRepository.save(client);
     }
     public void storeAdminRegister(StoreAdminDTO storeAdminDTO) {
-        User user = new User(null,storeAdminDTO.getUsername(),storeAdminDTO.getPassword(),"STORE",storeAdminDTO.getFirstName(),storeAdminDTO.getLastName(),storeAdminDTO.getEmail(),storeAdminDTO.getPhoneNumber(), storeAdminDTO.getCountry(), storeAdminDTO.getCity(), null,null,null);
+        String hash = new BCryptPasswordEncoder().encode(storeAdminDTO.getPassword());
+        User user = new User(null,storeAdminDTO.getUsername(),hash,"STORE",storeAdminDTO.getFirstName(),storeAdminDTO.getLastName(),storeAdminDTO.getEmail(),storeAdminDTO.getPhoneNumber(), storeAdminDTO.getCountry(), storeAdminDTO.getCity(), null,null,null);
         userRepository.save(user);
         StoreAdmin storeAdmin = new StoreAdmin(null , user,false,null);
         storeAdminRepository.save(storeAdmin);
     }
 
     public void expertRegister(ExpertDTO expertDTO) {
-        User user = new User(null, expertDTO.getUsername(), expertDTO.getPassword(), "EXPERT" , expertDTO.getFirstName(), expertDTO.getLastName(), expertDTO.getEmail(), expertDTO.getPhoneNumber(), expertDTO.getCountry(), expertDTO.getCity(), null,null,null);
+        String hash = new BCryptPasswordEncoder().encode(expertDTO.getPassword());
+        User user = new User(null, expertDTO.getUsername(), hash, "EXPERT" , expertDTO.getFirstName(), expertDTO.getLastName(), expertDTO.getEmail(), expertDTO.getPhoneNumber(), expertDTO.getCountry(), expertDTO.getCity(), null,null,null);
         userRepository.save(user);
         Expert expert = new Expert(null, expertDTO.getBrief(), expertDTO.getInstagram(), expertDTO.getX(), false , user,null,null);
         expertRepository.save(expert);
@@ -167,5 +172,45 @@ public class UserService {
 
     }
 
+    public void blockStore(Integer storeId,Integer userId) {
+        Store store = storeRepository.findStoreById(storeId);
+        User user = userRepository.findUserById(userId);
+        if (!user.getRole().equals("ADMIN"))
+            throw new ApiException("You are not allowed to block this storeAdmin");
 
+        if (store == null||user==null) {
+            throw new ApiException("Store admin not found or storeAdmin not found");
+        }
+        store.setActive(false);
+        storeRepository.save(store);
+    }
+
+    public void unBlockStore(Integer storeId,Integer userId) {
+        Store store = storeRepository.findStoreById(storeId);
+        User user = userRepository.findUserById(userId);
+        if (store == null||user==null) {
+            throw new ApiException("Store admin not found or storeAdmin not found");
+        }
+        store.setActive(true);
+        storeRepository.save(store);
+    }
+
+    //V3
+    public void activateStoreAdmin(Integer storeAdminId) {
+        StoreAdmin storeAdmin = storeAdminRepository.findStoreAdminById(storeAdminId);
+        if (storeAdmin == null) {
+            throw new ApiException("Store Admin not found");}
+        storeAdmin.setActive(true);
+        storeAdminRepository.save(storeAdmin);}
+
+    //V3
+    public void DeactivateStoreAdmin(Integer storeAdminId) {
+        StoreAdmin storeAdmin = storeAdminRepository.findStoreAdminById(storeAdminId);
+        if (storeAdmin == null) {
+            throw new ApiException("Store Admin not found");}
+        storeAdmin.setActive(false);
+        storeAdminRepository.save(storeAdmin);}
 }
+
+
+

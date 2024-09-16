@@ -40,13 +40,16 @@ public class Store {
 
     @NotEmpty(message = "commercial register should not be empty")
     @Size(max = 10,message = "name should be less than 11")
-    @Column(columnDefinition = "VARCHAR(10) NOT NULL")
+    @Column(columnDefinition = "VARCHAR(10) NOT NULL UNIQUE")
     private String commercialRegister;
 
     @NotEmpty(message = "restaurant image should not be empty")
     @Size(max = 1000,message = "name should be less than 1001")
     @Column(columnDefinition = "VARCHAR(1000) NOT NULL")
     private String restaurantImage;
+
+    @Column(columnDefinition = "boolean")
+    private boolean isActive;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "store")
     private Set<Branch> branches;

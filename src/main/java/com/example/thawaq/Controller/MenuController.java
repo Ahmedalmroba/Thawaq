@@ -16,11 +16,10 @@ public class MenuController {
     public ResponseEntity getAllMenu() {
         return ResponseEntity.status(200).body(menuService.getAllMenus());
     }
-    @PostMapping("/add/{CategoryId}")
-    public ResponseEntity addMenu(@RequestBody Menu menu,@PathVariable Integer CategoryId) {
-        menuService.addMenu(menu,CategoryId);
+    @PostMapping("/add/{CategoryId}/{branchId}")
+    public ResponseEntity addMenu(@RequestBody Menu menu,@PathVariable Integer CategoryId,@PathVariable Integer branchId) {
+        menuService.addMenu(menu,CategoryId,branchId);
         return ResponseEntity.status(200).body("added successfully");
-
     }
     @PutMapping("/update/{MenuId}/{CategoryId}")
     public ResponseEntity updateMenu(@RequestBody Menu menu,@PathVariable Integer MenuId,@PathVariable Integer CategoryId) {

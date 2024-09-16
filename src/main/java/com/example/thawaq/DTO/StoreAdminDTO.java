@@ -23,7 +23,6 @@ public class StoreAdminDTO {
     //@Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
        //     message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
     private String password;
-    @NotEmpty
     @Pattern(regexp = "^(CLIENT|EXPERT|STORE|ADMIN)$")
     private String role;
     @NotEmpty(message = "First name cannot be empty")

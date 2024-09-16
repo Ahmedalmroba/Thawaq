@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.*;
 public class FavoriteController {
     private final FavoriteService favoriteService;
 
-    @PostMapping("/add/{MenuId}")
-    public ResponseEntity addLike(@RequestBody Favorite favorite, @PathVariable Integer MenuId) {
-        favoriteService.AddFavorite(favorite,MenuId);
+    @GetMapping("/get-all")
+    public ResponseEntity findAll() {
+        return ResponseEntity.status(200).body(favoriteService.get());
+    }
+
+    @PostMapping("/add/{MenuId}/{clientId}")
+    public ResponseEntity addLike(@PathVariable Integer MenuId, @PathVariable Integer clientId) {
+        favoriteService.AddFavorite(MenuId,clientId);
         return ResponseEntity.status(200).body("add favorite successfully");
     }
 

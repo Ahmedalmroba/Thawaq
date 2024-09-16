@@ -26,6 +26,7 @@ public class RequestService {
     }
 
     //Add Request from store admin to the expert(That Expert can rate the store)
+    //V3
     public void addRequest(Request request,Integer storeAdminId,Integer expertId) {
         StoreAdmin storeAdmin = storeAdminRepository.findStoreAdminById(storeAdminId);
         Expert e = expertRepository.findExpertById(expertId);
@@ -33,6 +34,10 @@ public class RequestService {
             throw new ApiException("Store admin not found");}
         if(e == null){
             throw new ApiException("Expert not found");}
+        if(!storeAdmin.isActive()){
+            throw new ApiException("Store admin is not active");}
+        if(!e.isActive()){
+            throw new ApiException("Expert is not active");}
         request.setStatus(Request.Status.PENDING);
         request.setExpert(e);
         request.setStore(storeAdmin.getStore());

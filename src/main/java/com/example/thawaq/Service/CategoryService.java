@@ -2,9 +2,12 @@ package com.example.thawaq.Service;
 
 
 import com.example.thawaq.Api.ApiException;
+import com.example.thawaq.Model.Branch;
 import com.example.thawaq.Model.Category;
 import com.example.thawaq.Model.Menu;
+import com.example.thawaq.Repository.BranchRepository;
 import com.example.thawaq.Repository.CategoryRepository;
+import com.example.thawaq.Repository.MenuRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final BranchRepository branchRepository;
+    private final MenuRepository menuRepository;
 
     public List<Category> getAllCategories() {
         if (categoryRepository.findAll().isEmpty()) {
@@ -43,13 +48,18 @@ public class CategoryService {
     }
 
     //Discount by category name (Jana) v2
-    public void applyDiscountToCategoryByName(String categoryName, double discountPercentage) {
+    public void applyDiscountToCategoryByName(String categoryName,Integer branchId ,double discountPercentage) {
         Category category = categoryRepository.findCategoryByName(categoryName);
+        Branch branch = branchRepository.findBranchById(branchId);
+        List<Menu> menus = menuRepository.findMenuByCategoryAndBranch(category,branch);
+        if (branch == null) {
+            throw new ApiException("Branch not found");
+        }
         if (category == null) {
             throw new ApiException("Category with name: " + categoryName + " not found");}
         if (discountPercentage <= 0 || discountPercentage > 100) {
             throw new ApiException("Invalid discount percentage !");}
-        for (Menu menu : category.getMenus()) {
+        for (Menu menu : menus) {
             double discountedPrice = menu.getPrice() - (menu.getPrice() * discountPercentage / 100);
             menu.setPrice(discountedPrice);}
         categoryRepository.save(category);}

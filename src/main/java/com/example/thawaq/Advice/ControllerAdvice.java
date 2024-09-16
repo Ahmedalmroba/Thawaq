@@ -113,4 +113,10 @@ public class ControllerAdvice {
         String msg = e.getMessage();
         return  ResponseEntity.status(400).body(new ApiResponse(msg));
     }
+
+    @ExceptionHandler(value = ArrayIndexOutOfBoundsException.class)  //v2
+    public ResponseEntity<ApiResponse> ArrayIndexOutOfBoundsException(ArrayIndexOutOfBoundsException e)
+    {
+        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+    }
 }

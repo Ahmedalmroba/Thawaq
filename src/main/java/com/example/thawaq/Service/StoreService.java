@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.mapping.Collection;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +19,8 @@ public class StoreService {
     private final CategoryRepository categoryRepository;
     private final MenuRepository menuRepository;
     private final AddressRepository addressRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ClientRepository clientRepository;
 
 
     public List<Store> getStores()
@@ -36,6 +35,7 @@ public class StoreService {
         {
             throw new ApiException("Store not found");
         }
+        store.setActive(false);
         storeRepository.save(store);
         sa.setStore(store);
         storeAdminRepository.save(sa);
@@ -76,7 +76,7 @@ public class StoreService {
         List<Store> stores = storeRepository.findStoreByName(name);
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("CAFE")){
+            if (store.getTypeOfActivity().equals("CAFE")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -93,7 +93,7 @@ public class StoreService {
         List<Store> stores = storeRepository.findStoreByName(name);
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("RESTAURANT")){
+            if (store.getTypeOfActivity().equals("RESTAURANT")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -110,7 +110,7 @@ public class StoreService {
         List<Store> stores = storeRepository.findStoreByName(name);
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("BOTH")){
+            if (store.getTypeOfActivity().equals("BOTH")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -133,7 +133,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("CAFE")){
+            if (store.getTypeOfActivity().equals("CAFE")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -155,7 +155,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("RESTAURANT")){
+            if (store.getTypeOfActivity().equals("RESTAURANT")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -177,7 +177,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("BOTH")){
+            if (store.getTypeOfActivity().equals("BOTH")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -199,7 +199,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("CAFE")){
+            if (store.getTypeOfActivity().equals("CAFE")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -220,7 +220,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("RESTAURANT")){
+            if (store.getTypeOfActivity().equals("RESTAURANT")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -241,7 +241,7 @@ public class StoreService {
         }
         List<Store> chosenStores = new ArrayList<>();
         for (Store store : stores) {
-            if (store.getTypeOfActivity().equals("BOTH")){
+            if (store.getTypeOfActivity().equals("BOTH")&&store.isActive()){
                 chosenStores.add(store);
             }
         }
@@ -254,6 +254,89 @@ public class StoreService {
         });
         return chosenStores;
     }
+
+    public List<Store> getRestaurantsYouLike(Integer clientId){
+        Client client = clientRepository.findClientById(clientId);
+        List<Store> stores = new ArrayList<>();
+        List<Favorite> favorites = favoriteRepository.findFavoriteByClient(client);
+        for (Favorite favorite : favorites) {
+            if (favorite.getMenu().getBranch().getStore().getTypeOfActivity().equals("RESTAURANT")&&favorite.getMenu().getBranch().getStore().isActive()){
+                stores.add(favorite.getMenu().getBranch().getStore());
+            }
+        }
+        return stores;
+    }
+
+    public List<Store> getCafesYouLike(Integer clientId){
+        Client client = clientRepository.findClientById(clientId);
+        List<Store> stores = new ArrayList<>();
+        List<Favorite> favorites = favoriteRepository.findFavoriteByClient(client);
+        for (Favorite favorite : favorites) {
+            if (favorite.getMenu().getBranch().getStore().getTypeOfActivity().equals("CAFE")&&favorite.getMenu().getBranch().getStore().isActive()){
+                stores.add(favorite.getMenu().getBranch().getStore());
+            }
+        }
+        return stores;
+    }
+
+    public List<Store> getCafesYouMayLike(Integer clientId){
+        Client client = clientRepository.findClientById(clientId);
+        List<Favorite> favorites = favoriteRepository.findFavoriteByClient(client);
+        List<Category> categories = new ArrayList<>();
+        for (Favorite favorite : favorites) {
+            if (favorite.getMenu().getBranch().getStore().getTypeOfActivity().equals("CAFE")){
+                categories.add(favorite.getMenu().getCategory());
+            }
+        }
+
+        Map<String, Integer> categoryCount = new HashMap<>();
+
+        for (Category category : categories) {
+            String categoryName = category.getName();
+            categoryCount.put(categoryName, categoryCount.getOrDefault(categoryName, 0) + 1);
+        }
+
+
+        String mostRepeated = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                mostRepeated = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+        return getBestQualityForCafesByDishType(mostRepeated);
+    }
+
+    public List<Store> getRestaurantYouMayLike(Integer clientId){
+        Client client = clientRepository.findClientById(clientId);
+        List<Favorite> favorites = favoriteRepository.findFavoriteByClient(client);
+        List<Category> categories = new ArrayList<>();
+        for (Favorite favorite : favorites) {
+            if (favorite.getMenu().getBranch().getStore().getTypeOfActivity().equals("CAFE")){
+                categories.add(favorite.getMenu().getCategory());
+            }
+        }
+
+        Map<String, Integer> categoryCount = new HashMap<>();
+
+        for (Category category : categories) {
+            String categoryName = category.getName();
+            categoryCount.put(categoryName, categoryCount.getOrDefault(categoryName, 0) + 1);
+        }
+
+
+        String mostRepeated = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                mostRepeated = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+        return getBestQualityForRestaurantByDishType(mostRepeated);
+    }
+
     ////v3
     public List<Store> getLowestCostForCafesByName(String name) {
         List<Store> stores = storeRepository.findStoreByName(name);
@@ -357,7 +440,7 @@ public class StoreService {
         return Stores1;
 
 
-            }
+    }
     ////v3
     public List<Store> getLowestCostForBothByDishType(String categoryName){
         Category category = categoryRepository.findCategoryByName(categoryName);
@@ -379,7 +462,7 @@ public class StoreService {
 
             }});
         return Stores1;
-}            ////v3
+    }            ////v3
     public List<Store>  getLowestCostForCafesByCity(String City) {
         List<Address> addresses = addressRepository.findAddressByCity(City);
         List<Store> stores = new ArrayList<>();
@@ -443,5 +526,202 @@ public class StoreService {
 
 
 
-}}
 
+
+
+    }
+
+    //V3 Jana
+    public List<Store> getBestServiceForCafesByName(String name) {
+        List<Store> stores = storeRepository.findStoreByName(name);
+        List<Store> cafeList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("CAFE")) {
+                cafeList.add(store);}}
+        List<Store> sortedCafes = new ArrayList<>();
+        while (!cafeList.isEmpty()) {
+            Store bestStoreService = cafeList.get(0);
+            for (Store store : cafeList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            sortedCafes.add(bestStoreService);
+            cafeList.remove(bestStoreService);}
+        return sortedCafes;}
+
+
+    //V3 Jana
+    public List<Store> getBestServiceForRestaurantByName(String name) {
+        List<Store> stores = storeRepository.findStoreByName(name);
+        List<Store> restaurantList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("RESTAURANT")) {
+                restaurantList.add(store);}}
+        List<Store> sortedRestaurant = new ArrayList<>();
+        while (!restaurantList.isEmpty()) {
+            Store bestStoreService = restaurantList.get(0);
+            for (Store store : restaurantList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            sortedRestaurant.add(bestStoreService);
+            restaurantList.remove(bestStoreService);}
+        return sortedRestaurant;}
+
+
+    //V3
+    public List<Store> getBestServiceForBothByName(String name) {
+        List<Store> stores = storeRepository.findStoreByName(name);
+        List<Store> bothStoresList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("BOTH")) {
+                bothStoresList.add(store);}}
+        List<Store> sortedRestaurant = new ArrayList<>();
+        while (!bothStoresList.isEmpty()) {
+            Store bestStoreService = bothStoresList.get(0);
+            for (Store store : bothStoresList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            sortedRestaurant.add(bestStoreService);
+            bothStoresList.remove(bestStoreService);}
+        return sortedRestaurant;}
+
+
+    //V3
+    public List<Store> getBestServiceForCafesByCategoryName(String categoryName) {
+        Category category = categoryRepository.findCategoryByName(categoryName);
+        List<Menu> menus = menuRepository.findMenuByCategory(category);
+        List<Store> stores = new ArrayList<>();
+        for (Menu menu : menus) {
+            stores.add(menu.getBranch().getStore());}
+        List<Store> cafeList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("CAFE")) {
+                cafeList.add(store);}}
+        List<Store> bestCafes = new ArrayList<>();
+        while (!cafeList.isEmpty()) {
+            Store bestStoreService = cafeList.get(0);
+            for (Store store : cafeList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestCafes.add(bestStoreService);
+            cafeList.remove(bestStoreService);}
+        return bestCafes;
+    }
+
+
+
+    //V3
+    public List<Store> getBestServiceForRestaurantByCategoryName(String categoryName) {
+        Category category = categoryRepository.findCategoryByName(categoryName);
+        List<Menu> menus = menuRepository.findMenuByCategory(category);
+        List<Store> stores = new ArrayList<>();
+        for (Menu menu : menus) {
+            stores.add(menu.getBranch().getStore());}
+        List<Store> restuarntList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("RESTAURANT")) {
+                restuarntList.add(store);}}
+        List<Store> bestRestaurant = new ArrayList<>();
+        while (!restuarntList.isEmpty()) {
+            Store bestStoreService = restuarntList.get(0);
+            for (Store store : restuarntList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestRestaurant.add(bestStoreService);
+            restuarntList.remove(bestStoreService);}
+        return bestRestaurant;}
+
+
+    //V3
+    public List<Store> getBestServiceForBothByCategoryName(String categoryName) {
+        Category category = categoryRepository.findCategoryByName(categoryName);
+        List<Menu> menus = menuRepository.findMenuByCategory(category);
+        List<Store> stores = new ArrayList<>();
+        for (Menu menu : menus) {
+            stores.add(menu.getBranch().getStore());}
+        List<Store> bothList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("BOTH")) {
+                bothList.add(store);}}
+        List<Store> bestForBoth = new ArrayList<>();
+        while (!bothList.isEmpty()) {
+            Store bestStoreService = bothList.get(0);
+            for (Store store : bothList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestForBoth.add(bestStoreService);
+            bothList.remove(bestStoreService);}
+        return bestForBoth;}
+
+
+    //V3
+    public List<Store> getBestServiceForCafeByCityName(String cityName) {
+        List<Address> addresses = addressRepository.findAddressByCity(cityName);
+        List<Store> stores = new ArrayList<>();
+        for (Address address : addresses) {
+            stores.add(address.getBranch().getStore());}
+        List<Store> cafeList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("CAFE")) {
+                cafeList.add(store);}}
+        List<Store> bestCafe = new ArrayList<>();
+        while (!cafeList.isEmpty()) {
+            Store bestStoreService = cafeList.get(0);
+            for (Store store : cafeList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestCafe.add(bestStoreService);
+            cafeList.remove(bestStoreService);}
+        return bestCafe;}
+
+
+    //V3
+    public List<Store> getBestServiceForRestaurantByCityName(String cityName) {
+        List<Address> addresses = addressRepository.findAddressByCity(cityName);
+        List<Store> stores = new ArrayList<>();
+        for (Address address : addresses) {
+            stores.add(address.getBranch().getStore());}
+        List<Store> restaurantList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("RESTAURANT")) {
+                restaurantList.add(store);}}
+        List<Store> bestRestaurant = new ArrayList<>();
+        while (!restaurantList.isEmpty()) {
+            Store bestStoreService = restaurantList.get(0);
+            for (Store store : restaurantList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestRestaurant.add(bestStoreService);
+            restaurantList.remove(bestStoreService);}
+        return bestRestaurant;}
+
+
+    //V3
+    public List<Store> getBestServiceForBothByCityName(String cityName) {
+        List<Address> addresses = addressRepository.findAddressByCity(cityName);
+        List<Store> stores = new ArrayList<>();
+        for (Address address : addresses) {
+            stores.add(address.getBranch().getStore());}
+        List<Store> bothList = new ArrayList<>();
+        for (Store store : stores) {
+            if (store.getTypeOfActivity().equals("RESTAURANT")) {
+                bothList.add(store);}}
+        List<Store> bestForBoth = new ArrayList<>();
+        while (!bothList.isEmpty()) {
+            Store bestStoreService = bothList.get(0);
+            for (Store store : bothList) {
+                if (ratingService.CalculateAverageServiceStore(store.getId()) >
+                        ratingService.CalculateAverageServiceStore(bestStoreService.getId())) {
+                    bestStoreService = store;}}
+            bestForBoth.add(bestStoreService);
+            bothList.remove(bestStoreService);}
+        return bestForBoth;}
+
+}

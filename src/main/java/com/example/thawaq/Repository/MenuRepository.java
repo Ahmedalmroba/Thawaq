@@ -15,4 +15,5 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     //Find dish by price range min and max (Jana) v2
     List<Menu> findDishesByPriceBetween(double minPrice, double maxPrice);
     List<Menu> findMenuByCategory(Category category);
+    List<Menu> findMenuByCategoryAndBranch(Category category , Branch branch);
 }

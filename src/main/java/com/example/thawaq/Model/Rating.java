@@ -57,7 +57,7 @@ public class Rating {
     @Column(columnDefinition = "varchar(50)")
     private String title;
 
-    @NotNull(message = "Average rating cannot be null")
+
     @Column(columnDefinition = "DOUBLE not null")
     private double averageRating;
 

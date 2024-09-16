@@ -1,6 +1,7 @@
 package com.example.thawaq.Controller;
 
 import com.example.thawaq.Api.ApiResponse;
+import com.example.thawaq.Model.Client;
 import com.example.thawaq.Model.Store;
 import com.example.thawaq.Service.StoreService;
 import jakarta.validation.Valid;
@@ -97,6 +98,27 @@ public class StoreController {
     public ResponseEntity findStoreByBestQualityBothCity(@PathVariable String city){
         return ResponseEntity.status(200).body(storeService.getBestQualityForBothByCity(city));
     }
+
+    @GetMapping("/get-restaurants-you-like/{clientId}")
+    public ResponseEntity findRestaurantYouLike(@PathVariable Integer clientId){
+        return ResponseEntity.status(200).body(storeService.getRestaurantsYouLike(clientId));
+    }
+
+    @GetMapping("/get-cafes-you-like/{clientId}")
+    public ResponseEntity findCafesYouLike(@PathVariable Integer clientId){
+        return ResponseEntity.status(200).body(storeService.getCafesYouLike(clientId));
+    }
+
+    @GetMapping("/get-restaurants-you-may-like/{clientId}")
+    public ResponseEntity findRestaurantYouMayLike(@PathVariable Integer clientId){
+        return ResponseEntity.status(200).body(storeService.getRestaurantYouMayLike(clientId));
+    }
+
+    @GetMapping("/get-cafes-you-may-like/{clientId}")
+    public ResponseEntity findCafesYouMayLike(@PathVariable Integer clientId){
+        return ResponseEntity.status(200).body(storeService.getCafesYouMayLike(clientId));
+    }
+
     ///////v3
     @GetMapping("/get-lowes-cost-cafes-name/{name}")
     public ResponseEntity findStoreByLowesCostCafesName(@PathVariable String name){
@@ -142,4 +164,53 @@ public class StoreController {
     public ResponseEntity findStoreByLowesCostBothCity(@PathVariable String city){
         return ResponseEntity.status(200).body(storeService.getLowestCostForBothByCity(city));
     }
+
+    //V3
+    @GetMapping("/get-best-service-cafes-name/{name}")
+    public ResponseEntity getBestServiceForCafesByName(@PathVariable String name){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForCafesByName(name));
+    }
+    //V3
+    @GetMapping("/get-best-service-restaurant-name/{name}")
+    public ResponseEntity getBestServiceForRestaurantByName(@PathVariable String name){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForRestaurantByName(name));}
+    //V3
+    @GetMapping("/get-best-service-both-name/{name}")
+    public ResponseEntity getBestServiceForBothByName(@PathVariable String name){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForBothByName(name));
+    }
+    //V3
+    @GetMapping("/get-best-service-cafes-categoryName/{categoryName}")
+    public ResponseEntity getBestServiceForCafesByCategoryName(@PathVariable String categoryName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForCafesByCategoryName(categoryName));
+    }
+    //V3
+    @GetMapping("/get-best-service-restaurant-categoryName/{categoryName}")
+    public ResponseEntity getBestServiceForRestaurantByCategoryName(@PathVariable String categoryName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForRestaurantByCategoryName(categoryName));
+    }
+    //V3
+    @GetMapping("/get-best-service-both-categoryName/{categoryName}")
+    public ResponseEntity  getBestServiceForBothByCategoryName(@PathVariable String categoryName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForBothByCategoryName(categoryName));
+    }
+    //V3
+    @GetMapping("/get-best-service-cafe-cityName/{cityName}")
+    public ResponseEntity getBestServiceForCafeByCityName(@PathVariable String cityName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForCafeByCityName(cityName));
+    }
+
+    //V3
+    @GetMapping("/get-best-service-restaurant-cityName/{cityName}")
+    public ResponseEntity getBestServiceForRestaurantByCityName(@PathVariable String cityName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForRestaurantByCityName(cityName));
+    }
+    //v3
+    @GetMapping("/get-best-service-both-cityName/{cityName}")
+    public ResponseEntity  getBestServiceForBothByCityName(@PathVariable String cityName){
+        return ResponseEntity.status(200).body(storeService.getBestServiceForBothByCityName(cityName));
+    }
+
+
+
 }

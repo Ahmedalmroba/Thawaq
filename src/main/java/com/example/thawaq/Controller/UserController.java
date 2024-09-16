@@ -4,10 +4,12 @@ import com.example.thawaq.Api.ApiResponse;
 import com.example.thawaq.DTO.ClientDTO;
 import com.example.thawaq.DTO.ExpertDTO;
 import com.example.thawaq.DTO.StoreAdminDTO;
+import com.example.thawaq.Model.User;
 import com.example.thawaq.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -68,16 +70,16 @@ public class UserController {
         return ResponseEntity.status(200).body(new ApiResponse("User deleted successfully"));
     }
 
-    ///v2
-    @PutMapping("/block-expert/{expertId}/{userId}")
-    public ResponseEntity BlockExpert(@PathVariable Integer  expertId,@PathVariable Integer userId){
-        userService.BlockExpert(expertId,userId);
+    ///v2   v3
+    @PutMapping("/block-expert/{expertId}")
+    public ResponseEntity BlockExpert(@PathVariable Integer  expertId ,@AuthenticationPrincipal User user){
+        userService.BlockExpert(expertId,user.getId());
         return ResponseEntity.status(200).body(new ApiResponse("Expert blocked successfully"));
     }
-    ///v2
-    @PutMapping("/unblock-expert/{expertId}/{userId}")
-    public ResponseEntity UnblockExpert(@PathVariable Integer expertId,@PathVariable Integer userId){
-        userService.UnblockExpert(expertId,userId);
+    ///v2   v3
+    @PutMapping("/unblock-expert/{expertId}")
+    public ResponseEntity UnblockExpert(@PathVariable Integer expertId,@AuthenticationPrincipal User user){
+        userService.UnblockExpert(expertId,user.getId());
         return ResponseEntity.status(200).body(new ApiResponse("Expert unblocked successfully"));
     }
     ///v2
@@ -92,4 +94,31 @@ public class UserController {
         userService.UnBlockStoreAdmin(storeAdminId,userId);
         return ResponseEntity.status(200).body(new ApiResponse("Expert unblocked successfully"));
     }
+
+    @PutMapping("/block-store/{userId}/{storeId}")
+    public ResponseEntity blockStore(@PathVariable Integer userId,@PathVariable Integer storeId){
+        userService.blockStore(userId,storeId);
+        return ResponseEntity.status(200).body(new ApiResponse("Store blocked successfully"));
+    }
+
+    @PutMapping("/unblock-store/{userId}/{storeId}")
+    public ResponseEntity unblockStore(@PathVariable Integer userId,@PathVariable Integer storeId){
+        userService.unBlockStore(userId,storeId);
+        return ResponseEntity.status(200).body(new ApiResponse("Expert unblocked successfully"));
+    }
+
+    //V3
+    @PutMapping("/activate-storeAdmin/{storeAdminId}")
+    public ResponseEntity  activateStoreAdmin(@PathVariable Integer storeAdminId) {
+        userService.activateStoreAdmin(storeAdminId);
+        return ResponseEntity.status(200).body(new ApiResponse("Successfully Activate Store Admin"));
+    }
+
+    //V3
+    @PutMapping("/deactivate-storeAdmin/{storeAdminId}")
+    public ResponseEntity  deactivateStoreAdmin(@PathVariable Integer storeAdminId) {
+        userService.DeactivateStoreAdmin(storeAdminId);
+        return ResponseEntity.status(200).body(new ApiResponse("Successfully Activate Store Admin"));
+    }
+
 }

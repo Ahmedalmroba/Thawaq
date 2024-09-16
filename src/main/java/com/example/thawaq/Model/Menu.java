@@ -40,5 +40,6 @@ public class Menu {
     private Set<Favorite> favorites;
 
     @ManyToOne
+    @JsonIgnore
     private Branch branch;
 }

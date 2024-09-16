@@ -2,8 +2,10 @@ package com.example.thawaq.Service;
 
 
 import com.example.thawaq.Api.ApiException;
+import com.example.thawaq.Model.Branch;
 import com.example.thawaq.Model.Category;
 import com.example.thawaq.Model.Menu;
+import com.example.thawaq.Repository.BranchRepository;
 import com.example.thawaq.Repository.CategoryRepository;
 import com.example.thawaq.Repository.MenuRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.List;
 public class MenuService {
 private final MenuRepository menuRepository;
 private final CategoryRepository categoryRepository;
+private final BranchRepository branchRepository;
 
 public List<Menu> getAllMenus() {
     if (menuRepository.findAll().isEmpty()) {
@@ -23,11 +26,16 @@ public List<Menu> getAllMenus() {
     }
         return menuRepository.findAll();
     }
-   public void addMenu(Menu menu,Integer CategoryId) {
+   public void addMenu(Menu menu,Integer CategoryId,Integer branchId) {
     Category category = categoryRepository.findCategoryById(CategoryId);
     if (category==null){
         throw new ApiException("can not add menu");
     }
+    Branch branch = branchRepository.findBranchById(branchId);
+    if (branch==null){
+        throw new ApiException("can not add menu");
+    }
+    menu.setBranch(branch);
     menu.setCategory(category);
     menuRepository.save(menu);
 

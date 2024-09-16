@@ -34,4 +34,9 @@ public class ExpertController {
         return ResponseEntity.status(200).body(new ApiResponse("Request rejected"));
     }
 
+    @GetMapping("/top-4")
+    public ResponseEntity getTop4Experts() {
+        return ResponseEntity.status(200).body(expertService.findTop4Experts());
+    }
+
 }

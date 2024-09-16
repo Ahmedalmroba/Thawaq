@@ -8,6 +8,7 @@ import com.example.thawaq.Repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,4 +55,27 @@ public class ExpertService {
         request.setStatus(Request.Status.REJECTED);
         requestRepository.save(request);
     }
+
+    public List<Expert> findTop4Experts() {
+        List<Expert> experts = expertRepository.findExpertsByTotalRating();
+        if (experts.isEmpty()) {
+            throw new ApiException("experts does not have ratings");
+        }
+        List<Expert> topExpert = new ArrayList<>();
+        if (experts.size() >= 4) {
+            for (int i = 0; i < 4; i++) {
+                if (experts.get(i).isActive()){
+                    topExpert.add(experts.get(i));
+                }
+            }
+        }else {
+            for (int i = 0; i < experts.size(); i++) {
+                if (experts.get(i).isActive()){
+                    topExpert.add(experts.get(i));
+                }
+            }
+        }
+        return topExpert;
+    }
+
 }

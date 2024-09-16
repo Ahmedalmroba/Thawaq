@@ -6,13 +6,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,9 +29,8 @@ public class User {
     @NotEmpty(message = "Password cannot be empty")
     //@Pattern(regexp = "^(?=.[A-Z])(?=.[a-z])(?=.\\d)(?=.[\\W_]).{8,}$",
       //      message = "Password must be strong (at least eight characters: one uppercase letter, one lowercase letter, one number, and one special character)")
-    @Column(columnDefinition = "VARCHAR(35) NOT NULL")
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String password;
-    @NotEmpty
     @Pattern(regexp = "^(CLIENT|EXPERT|STORE|ADMIN)$")
     @Column(columnDefinition = "varchar(15) not null")
     private String role;
@@ -59,4 +64,29 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL , mappedBy = "user")
     @PrimaryKeyJoinColumn
     private Expert expert;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 }

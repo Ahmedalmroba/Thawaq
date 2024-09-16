@@ -38,8 +38,8 @@ public class CategoryController {
     }
 
     //Discount by category name (Jana) v2
-    @PutMapping("/apply-discount/{categoryName}/{discountPercentage}")
-    public ResponseEntity applyDiscountToCategoryByName(@PathVariable String categoryName,@PathVariable double discountPercentage){
-        categoryService.applyDiscountToCategoryByName(categoryName,discountPercentage);
+    @PutMapping("/apply-discount/{categoryName}/{branchId}/{discountPercentage}")
+    public ResponseEntity applyDiscountToCategoryByName(@PathVariable String categoryName,@PathVariable Integer branchId,@PathVariable double discountPercentage){
+        categoryService.applyDiscountToCategoryByName(categoryName,branchId,discountPercentage);
         return ResponseEntity.status(200).body(new ApiResponse("Successfully applied discount to "+categoryName));}
 }

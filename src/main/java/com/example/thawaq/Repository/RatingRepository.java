@@ -16,4 +16,6 @@ public interface RatingRepository extends JpaRepository<Rating, Integer> {
     List<Rating> findRatingByStore(Store store);
     ///v2
     List<Rating> findRatingByExpert(Expert expert);
+
+    List<Rating> findRatingByCommentContains(String comment);
 }

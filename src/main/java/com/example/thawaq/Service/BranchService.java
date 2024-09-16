@@ -37,7 +37,7 @@ public class BranchService {
         {
             throw new ApiException("Store admin not found");
         }
-        if(!sa.getStore().getId().equals(sa.getId()))
+        if(!sa.getStore().getId().equals(s.getId()))
         {
             throw new ApiException("Not match");
         }
